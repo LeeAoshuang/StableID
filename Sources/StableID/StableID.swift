@@ -34,7 +34,7 @@ public class StableID {
         self.logger.log(type: .info, message: "Configuring StableID...")
 
         // By default, generate a new anonymous identifier
-        var identifier = idGenerator.generateID()
+        var identifier: String = ""
 
         if let id {
             // if an identifier is provided in the configure method, identify with it
@@ -59,8 +59,19 @@ public class StableID {
                 }
             }
         }
+        
+        var newGen = false
+        if identifier.isEmpty {
+            identifier = idGenerator.generateID()
+            newGen = true
+        }
 
         _stableID = StableID(_id: identifier, _idGenerator: idGenerator)
+        
+        if newGen {
+            _stableID?.setLocal(key: Constants.StableID_Key_Identifier, value: identifier)
+            _stableID?.setRemote(key: Constants.StableID_Key_Identifier, value: identifier)
+        }
 
         self.logger.log(type: .info, message: "Configured StableID. Current user ID: \(identifier)")
 
